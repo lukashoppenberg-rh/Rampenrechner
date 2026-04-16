@@ -514,6 +514,37 @@
             .details-grid { grid-template-columns: 1fr 1fr; }
             .result-display { flex-direction: column; }
             .result-rhs { align-items: flex-start; }
+
+            /* Maximale Steigungen: Tabelle → gestapelte Karten */
+            .max-table thead { display: none; }
+            .max-table,
+            .max-table tbody,
+            .max-table tr,
+            .max-table td { display: block; width: 100%; }
+            .max-table tr {
+                padding: 12px 4px;
+                border-bottom: 1px solid var(--border);
+            }
+            .max-table tr:last-child { border-bottom: none; }
+            .max-table tr:nth-child(even) td { background: transparent; }
+            .max-table td {
+                border: none;
+                padding: 1px 0;
+                font-size: .83rem;
+                white-space: normal;
+            }
+            .max-table td:first-child {
+                font-weight: 600;
+                color: var(--text);
+                margin-bottom: 3px;
+            }
+            .max-table td.pct {
+                font-size: 1.05rem;
+                margin-bottom: 2px;
+            }
+            .max-table .note {
+                margin-top: 0;
+            }
         }
     </style>
 </head>
