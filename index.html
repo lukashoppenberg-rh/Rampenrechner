@@ -1,0 +1,1117 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rampenrechner | Rehasense</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary:        #1B3570;
+            --primary-hover:  #253F88;
+            --secondary:      #5BB4D8;
+            --secondary-light:#C8E7F5;
+            --bg:             #EEF3F8;
+            --card:           #FFFFFF;
+            --text:           #1A2B3C;
+            --muted:          #6B7C93;
+            --border:         #D0DCE8;
+            --ok:             #1D8348;
+            --ok-bg:          #D4EDDA;
+            --warn:           #7D6608;
+            --warn-bg:        #FFF3CD;
+            --danger:         #922B21;
+            --danger-bg:      #FADBD8;
+            --radius:         14px;
+            --shadow:         0 4px 24px rgba(27,53,112,.10);
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            font-family: 'Montserrat', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+        }
+
+        /* ── HEADER ──────────────────────────────────── */
+        header {
+            background: var(--primary);
+            padding: 14px 28px;
+            display: flex;
+            align-items: center;
+            gap: 18px;
+            box-shadow: 0 2px 12px rgba(0,0,0,.25);
+        }
+        header img { height: 52px; width: auto; }
+        .header-text h1 {
+            color: #fff;
+            font-size: 1.35rem;
+            font-weight: 700;
+            letter-spacing: -.3px;
+        }
+        .header-text p {
+            color: var(--secondary-light);
+            font-size: .78rem;
+            font-weight: 400;
+            margin-top: 2px;
+        }
+
+        /* ── LAYOUT ──────────────────────────────────── */
+        main {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 32px 16px 48px;
+            display: flex;
+            flex-direction: column;
+            gap: 24px;
+        }
+
+        .card {
+            background: var(--card);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px 28px 32px;
+        }
+
+        .card-title {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 4px;
+        }
+        .card-sub {
+            font-size: .82rem;
+            color: var(--muted);
+            margin-bottom: 24px;
+        }
+
+        /* ── NUTZERGRUPPE ─────────────────────────────── */
+        .group-label {
+            font-size: .8rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .6px;
+            margin-bottom: 10px;
+        }
+        .user-types {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 28px;
+        }
+        .ut-btn {
+            padding: 8px 14px;
+            border: 2px solid var(--border);
+            background: transparent;
+            border-radius: 100px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: .8rem;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all .18s;
+            white-space: nowrap;
+        }
+        .ut-btn:hover { border-color: var(--secondary); color: var(--primary); }
+        .ut-btn.active {
+            background: var(--secondary);
+            border-color: var(--secondary);
+            color: #fff;
+        }
+
+        /* ── MODE TABS ────────────────────────────────── */
+        .mode-tabs {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            border: 2px solid var(--border);
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 28px;
+        }
+        .mode-tab {
+            padding: 12px 6px;
+            background: transparent;
+            border: none;
+            font-family: 'Montserrat', sans-serif;
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--muted);
+            cursor: pointer;
+            transition: all .18s;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 5px;
+            border-right: 2px solid var(--border);
+        }
+        .mode-tab:last-child { border-right: none; }
+        .mode-tab svg { width: 22px; height: 22px; }
+        .mode-tab:hover { background: var(--bg); color: var(--primary); }
+        .mode-tab.active { background: var(--primary); color: #fff; }
+
+        /* ── INPUTS ───────────────────────────────────── */
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 18px;
+            margin-bottom: 24px;
+        }
+        .input-group { display: flex; flex-direction: column; gap: 7px; }
+        .input-group label {
+            font-size: .8rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .input-hint {
+            font-size: .72rem;
+            color: var(--muted);
+        }
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+        .input-wrap input {
+            width: 100%;
+            padding: 12px 46px 12px 14px;
+            border: 2px solid var(--border);
+            border-radius: 9px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            transition: border-color .18s, background .18s;
+            background: #fff;
+        }
+        .input-wrap input:focus {
+            outline: none;
+            border-color: var(--secondary);
+        }
+        .input-wrap input:disabled {
+            background: var(--bg);
+            color: var(--muted);
+            border-color: var(--border);
+        }
+        .input-wrap input.result-field {
+            background: var(--secondary-light);
+            border-color: var(--secondary);
+            color: var(--primary);
+        }
+        .unit {
+            position: absolute;
+            right: 12px;
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--muted);
+            pointer-events: none;
+        }
+
+        /* ── BUTTON ───────────────────────────────────── */
+        .calc-btn {
+            width: 100%;
+            padding: 15px;
+            background: var(--primary);
+            color: #fff;
+            border: none;
+            border-radius: 9px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background .18s, transform .1s;
+            letter-spacing: .3px;
+        }
+        .calc-btn:hover { background: var(--primary-hover); }
+        .calc-btn:active { transform: scale(.99); }
+
+        /* ── STATUS BADGE ─────────────────────────────── */
+        .status-badge {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            padding: 12px 16px;
+            border-radius: 9px;
+            font-size: .84rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+        }
+        .status-dot {
+            width: 9px; height: 9px;
+            border-radius: 50%;
+            margin-top: 3px;
+            flex-shrink: 0;
+        }
+        .s-ok   { background: var(--ok-bg);   color: var(--ok); }
+        .s-warn { background: var(--warn-bg);  color: var(--warn); }
+        .s-bad  { background: var(--danger-bg);color: var(--danger); }
+        .s-ok   .status-dot { background: var(--ok); }
+        .s-warn .status-dot { background: #D4AC0D; }
+        .s-bad  .status-dot { background: #C0392B; }
+
+        /* ── RESULT DISPLAY ───────────────────────────── */
+        .result-display {
+            background: linear-gradient(135deg, var(--primary) 0%, #253F88 100%);
+            border-radius: var(--radius);
+            padding: 24px 28px;
+            color: #fff;
+            margin-bottom: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+        }
+        .result-lhs {}
+        .result-label {
+            font-size: .82rem;
+            font-weight: 500;
+            opacity: .75;
+            margin-bottom: 6px;
+        }
+        .result-number {
+            font-size: 3.2rem;
+            font-weight: 800;
+            line-height: 1;
+        }
+        .result-number span {
+            font-size: 1.4rem;
+            font-weight: 400;
+            opacity: .75;
+            margin-left: 4px;
+        }
+        .result-sub { font-size: .8rem; opacity: .65; margin-top: 6px; }
+        .result-rhs {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 6px;
+        }
+        .ratio-pill {
+            background: rgba(255,255,255,.15);
+            border-radius: 100px;
+            padding: 5px 14px;
+            font-size: .8rem;
+            font-weight: 700;
+        }
+
+        /* ── SVG RAMP ─────────────────────────────────── */
+        .ramp-box {
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 20px 24px;
+            margin-bottom: 20px;
+        }
+        .ramp-box svg {
+            width: 100%;
+            max-width: 480px;
+            display: block;
+            margin: 0 auto;
+        }
+
+        /* ── DETAILS GRID ─────────────────────────────── */
+        .details-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+        .detail-tile {
+            background: var(--bg);
+            border-radius: 9px;
+            padding: 14px 16px;
+            border-left: 3px solid var(--secondary);
+        }
+        .detail-tile-label {
+            font-size: .75rem;
+            font-weight: 700;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: .5px;
+            margin-bottom: 5px;
+        }
+        .detail-tile-value {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* ── DIN NOTICE ───────────────────────────────── */
+        .din-notice {
+            background: #EBF5FB;
+            border: 1px solid #AED6F1;
+            border-radius: 9px;
+            padding: 14px 16px;
+            font-size: .78rem;
+            color: #1A5276;
+            line-height: 1.6;
+        }
+        .din-notice strong { font-weight: 700; }
+
+        /* ── MAX STEIGUNG TABLE ───────────────────────── */
+        .max-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .85rem;
+        }
+        .max-table th {
+            background: var(--primary);
+            color: #fff;
+            padding: 10px 14px;
+            text-align: left;
+            font-weight: 600;
+            font-size: .78rem;
+            letter-spacing: .3px;
+        }
+        .max-table th:first-child { border-radius: 8px 0 0 0; }
+        .max-table th:last-child  { border-radius: 0 8px 0 0; }
+        .max-table td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            vertical-align: top;
+        }
+        .max-table tr:last-child td { border-bottom: none; }
+        .max-table tr:nth-child(even) td { background: var(--bg); }
+        .max-table .pct {
+            font-weight: 700;
+            color: var(--primary);
+            white-space: nowrap;
+        }
+        .max-table .note { font-size: .75rem; color: var(--muted); margin-top: 2px; }
+
+        /* ── FOOTER ───────────────────────────────────── */
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--muted);
+            font-size: .76rem;
+            line-height: 1.7;
+        }
+
+        /* ── PRODUCTS ─────────────────────────────────── */
+        .prod-req {
+            background: var(--bg);
+            border-left: 3px solid var(--secondary);
+            border-radius: 9px;
+            padding: 11px 16px;
+            font-size: .82rem;
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 22px;
+        }
+        .series-block { margin-bottom: 26px; }
+        .series-block:last-child { margin-bottom: 0; }
+        .series-heading {
+            display: flex;
+            align-items: baseline;
+            gap: 10px;
+            border-bottom: 2px solid var(--secondary);
+            padding-bottom: 8px;
+            margin-bottom: 14px;
+        }
+        .series-name {
+            font-size: .82rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: var(--primary);
+        }
+        .series-type {
+            font-size: .75rem;
+            font-weight: 500;
+            color: var(--muted);
+        }
+        .variant-block { margin-bottom: 14px; }
+        .variant-block:last-child { margin-bottom: 0; }
+        .variant-title {
+            font-size: .82rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .hmv-tag, .qty-tag {
+            font-size: .68rem;
+            font-weight: 600;
+            color: var(--muted);
+            background: var(--bg);
+            border: 1px solid var(--border);
+            padding: 2px 8px;
+            border-radius: 100px;
+        }
+        .prod-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: .81rem;
+        }
+        .prod-table th {
+            background: var(--bg);
+            color: var(--muted);
+            padding: 7px 10px;
+            text-align: left;
+            font-weight: 700;
+            font-size: .7rem;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+            border-bottom: 1px solid var(--border);
+        }
+        .prod-table td {
+            padding: 9px 10px;
+            border-bottom: 1px solid #EEF3F8;
+            vertical-align: middle;
+            white-space: nowrap;
+        }
+        .prod-table tr:last-child td { border-bottom: none; }
+        .prod-table .match td {
+            background: #E8F8EE;
+        }
+        .prod-table .match td:first-child {
+            border-left: 3px solid #27AE60;
+            padding-left: 8px;
+        }
+        .match-tag {
+            display: inline-block;
+            font-size: .68rem;
+            font-weight: 700;
+            color: #1D8348;
+            background: #D4EDDA;
+            padding: 2px 8px;
+            border-radius: 100px;
+        }
+        .prod-artnr {
+            font-size: .75rem;
+            color: var(--muted);
+            font-family: 'Courier New', monospace;
+        }
+        .prod-price {
+            font-weight: 700;
+            color: var(--primary);
+        }
+        .no-match-note {
+            padding: 18px;
+            text-align: center;
+            color: var(--muted);
+            font-size: .83rem;
+            background: var(--bg);
+            border-radius: 9px;
+        }
+
+        /* ── HIDDEN ───────────────────────────────────── */
+        .hidden { display: none !important; }
+
+        /* ── RESPONSIVE ───────────────────────────────── */
+        @media (max-width: 640px) {
+            .card { padding: 20px 16px 24px; }
+            .input-row { grid-template-columns: 1fr; }
+            .mode-tabs { grid-template-columns: 1fr; }
+            .mode-tab { flex-direction: row; gap: 10px; border-right: none; border-bottom: 2px solid var(--border); }
+            .mode-tab:last-child { border-bottom: none; }
+            .details-grid { grid-template-columns: 1fr 1fr; }
+            .result-display { flex-direction: column; }
+            .result-rhs { align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════ HEADER -->
+<header>
+    <img src="logo.png" alt="Rehasense Logo" onerror="this.style.display='none'">
+    <div class="header-text">
+        <h1>Rampenrechner</h1>
+        <p>Für Rollstuhlfahrer und Mobilitätshilfen</p>
+    </div>
+</header>
+
+<main>
+
+    <!-- ═══════════════════════════════════ RECHNER -->
+    <div class="card">
+        <p class="card-title">Berechnung</p>
+        <p class="card-sub">Wählen Sie Ihre Nutzergruppe und den gewünschten Berechnungstyp.</p>
+
+        <!-- Nutzergruppe -->
+        <p class="group-label">Nutzergruppe</p>
+        <div class="user-types">
+            <button class="ut-btn" id="ut-tetra"    onclick="setUser('tetra')">Tetraplegiker · max. 3%</button>
+            <button class="ut-btn active" id="ut-public"   onclick="setUser('public')">Öff. Bereich · max. 6%</button>
+            <button class="ut-btn" id="ut-self"    onclick="setUser('self')">Selbstfahrer · max. 6%</button>
+            <button class="ut-btn" id="ut-strong"  onclick="setUser('strong')">Kräft. Selbstfahrer · bis 10%</button>
+            <button class="ut-btn" id="ut-helper"  onclick="setUser('helper')">Mit Helfer · max. 12%</button>
+            <button class="ut-btn" id="ut-elec"    onclick="setUser('elec')">Elektroantrieb · bis 20%</button>
+        </div>
+
+        <!-- Modus -->
+        <div class="mode-tabs">
+            <button class="mode-tab active" id="tab-len" onclick="setMode('len')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <path d="M3 17L21 7"/><line x1="3" y1="17" x2="21" y2="17"/>
+                    <line x1="3" y1="12" x2="3" y2="17"/><line x1="21" y1="7" x2="21" y2="17"/>
+                </svg>
+                Länge berechnen
+            </button>
+            <button class="mode-tab" id="tab-grad" onclick="setMode('grad')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <polyline points="3,17 9,11 13,15 21,7"/><line x1="21" y1="7" x2="21" y2="12"/>
+                    <line x1="16" y1="7" x2="21" y2="7"/>
+                </svg>
+                Steigung berechnen
+            </button>
+            <button class="mode-tab" id="tab-h" onclick="setMode('h')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="12" y1="3" x2="12" y2="21"/>
+                    <polyline points="8,7 12,3 16,7"/><polyline points="8,17 12,21 16,17"/>
+                </svg>
+                Höhe berechnen
+            </button>
+        </div>
+
+        <!-- Eingaben -->
+        <div class="input-row">
+            <div class="input-group">
+                <label for="in-h">Höhe der Stufe</label>
+                <div class="input-wrap">
+                    <input type="number" id="in-h" min="0.1" max="300" step="0.5" placeholder="z. B. 15">
+                    <span class="unit">cm</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="in-l">Rampenlänge</label>
+                <div class="input-wrap">
+                    <input type="number" id="in-l" min="0.01" max="50" step="0.01" placeholder="z. B. 1.50">
+                    <span class="unit">m</span>
+                </div>
+            </div>
+            <div class="input-group">
+                <label for="in-g">Steigung</label>
+                <div class="input-wrap">
+                    <input type="number" id="in-g" min="0.1" max="100" step="0.1" placeholder="z. B. 6" value="6">
+                    <span class="unit">%</span>
+                </div>
+                <span class="input-hint" id="grad-hint">DIN 18040-1: max. 6% im öff. Bereich</span>
+            </div>
+        </div>
+
+        <button class="calc-btn" onclick="calculate()">Berechnen</button>
+    </div>
+
+    <!-- ═══════════════════════════════════ ERGEBNIS -->
+    <div class="card hidden" id="result-card">
+        <p class="card-title">Ergebnis</p>
+        <p class="card-sub" id="res-subtitle"></p>
+
+        <!-- Status -->
+        <div class="status-badge" id="status-badge">
+            <div class="status-dot"></div>
+            <span id="status-text"></span>
+        </div>
+
+        <!-- Result number -->
+        <div class="result-display">
+            <div class="result-lhs">
+                <div class="result-label" id="res-label">Benötigte Rampenlänge</div>
+                <div class="result-number" id="res-number">
+                    — <span>m</span>
+                </div>
+                <div class="result-sub" id="res-sub"></div>
+            </div>
+            <div class="result-rhs">
+                <div class="ratio-pill" id="res-ratio">1 : —</div>
+            </div>
+        </div>
+
+        <!-- SVG Ramp visual -->
+        <div class="ramp-box">
+            <svg id="ramp-svg" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg"></svg>
+        </div>
+
+        <!-- Detail tiles -->
+        <div class="details-grid">
+            <div class="detail-tile">
+                <div class="detail-tile-label">Höhe</div>
+                <div class="detail-tile-value" id="d-h">—</div>
+            </div>
+            <div class="detail-tile">
+                <div class="detail-tile-label">Rampenlänge</div>
+                <div class="detail-tile-value" id="d-l">—</div>
+            </div>
+            <div class="detail-tile">
+                <div class="detail-tile-label">Steigung</div>
+                <div class="detail-tile-value" id="d-g">—</div>
+            </div>
+        </div>
+
+        <!-- DIN Notice -->
+        <div class="din-notice">
+            <strong>Hinweis:</strong> Im öffentlichen Bereich sind Rampen nach <strong>DIN 18040-1</strong> mit max. 6% auszuführen.
+            Im privaten Bereich gilt die DIN 18040-2. Bei Steigungen über 6% ist ein
+            <strong>Sicherheitsgurt</strong> sowie eine <strong>Kippsicherung</strong> am Rollstuhl empfehlenswert.
+        </div>
+    </div>
+
+    <!-- ═══════════════════════════════════ MAXIMAL-STEIGUNGEN -->
+    <div class="card">
+        <p class="card-title">Maximale Steigungen</p>
+        <p class="card-sub">Empfehlungen nach Nutzergruppe gemäß DIN 18040</p>
+        <table class="max-table">
+            <thead>
+                <tr>
+                    <th>Nutzergruppe</th>
+                    <th>Max. Steigung</th>
+                    <th>Hinweis</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Tetraplegiker</td>
+                    <td class="pct">max. 3%</td>
+                    <td><div class="note">Sehr flache Steigung erforderlich</div></td>
+                </tr>
+                <tr>
+                    <td>Selbstfahrer (öffentl. Bereich)</td>
+                    <td class="pct">max. 6%</td>
+                    <td><div class="note">DIN 18040-1 — verbindlich im öffentlichen Bereich</div></td>
+                </tr>
+                <tr>
+                    <td>Selbstfahrer (privat)</td>
+                    <td class="pct">max. 6%</td>
+                    <td><div class="note">DIN 18040-2</div></td>
+                </tr>
+                <tr>
+                    <td>Kräftige Selbstfahrer</td>
+                    <td class="pct">6 – 10%</td>
+                    <td><div class="note">Nur im privaten Bereich</div></td>
+                </tr>
+                <tr>
+                    <td>Mit Helfer</td>
+                    <td class="pct">max. 12%</td>
+                    <td><div class="note">Bedienungsanleitung beachten</div></td>
+                </tr>
+                <tr>
+                    <td>Mit kräftigem Helfer</td>
+                    <td class="pct">12 – 20%</td>
+                    <td><div class="note">Nur mit ausreichend Kraft</div></td>
+                </tr>
+                <tr>
+                    <td>Elektroantrieb</td>
+                    <td class="pct">bis ca. 20%</td>
+                    <td><div class="note">Bedienungsanleitung des Rollstuhls unbedingt beachten</div></td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ═══════════════════════════════════ PRODUKTE -->
+    <div class="card hidden" id="products-card">
+        <p class="card-title">Passende Produkte</p>
+        <div class="prod-req" id="prod-req"></div>
+        <div id="products-content"></div>
+    </div>
+
+</main>
+
+<footer>
+    © 2026 Rehasense · Alle Angaben ohne Gewähr · Bitte beachten Sie die jeweils gültigen DIN-Normen<br>
+    Formeln: Länge = Höhe × 100 / Steigung &nbsp;|&nbsp; Steigung = Höhe × 100 / Länge &nbsp;|&nbsp; Höhe = Steigung × Länge / 100
+</footer>
+
+<script>
+/* ── DATA ─────────────────────────────────────────────────── */
+const users = {
+    tetra:  { max: 3,  label: 'Tetraplegiker',         hint: 'Empfehlung: max. 3%' },
+    public: { max: 6,  label: 'Öff. Bereich (DIN)',    hint: 'DIN 18040-1: max. 6% im öffentlichen Bereich' },
+    self:   { max: 6,  label: 'Selbstfahrer',           hint: 'Empfehlung: max. 6%' },
+    strong: { max: 10, label: 'Kräft. Selbstfahrer',   hint: 'Empfehlung: 6–10% (privater Bereich)' },
+    helper: { max: 12, label: 'Mit Helfer',             hint: 'Empfehlung: max. 12%' },
+    elec:   { max: 20, label: 'Elektroantrieb',         hint: 'Bis ca. 20% — Bedienungsanleitung beachten' },
+};
+
+let mode = 'len';
+let user = 'public';
+
+/* ── SETTERS ──────────────────────────────────────────────── */
+function setUser(u) {
+    user = u;
+    Object.keys(users).forEach(k => {
+        document.getElementById('ut-' + k).classList.toggle('active', k === u);
+    });
+    document.getElementById('grad-hint').textContent = users[u].hint;
+    // Prefill suggested gradient if gradient field is editable
+    if (mode !== 'grad') {
+        const gField = document.getElementById('in-g');
+        if (!gField.disabled) gField.value = users[u].max;
+    }
+}
+
+function setMode(m) {
+    mode = m;
+    ['len','grad','h'].forEach(t => {
+        document.getElementById('tab-' + t).classList.toggle('active', t === m);
+    });
+
+    const fH = document.getElementById('in-h');
+    const fL = document.getElementById('in-l');
+    const fG = document.getElementById('in-g');
+
+    // Reset all to normal
+    [fH, fL, fG].forEach(f => {
+        f.disabled = false;
+        f.classList.remove('result-field');
+    });
+
+    // Disable & highlight the output field
+    if (m === 'len') { fL.disabled = true; fL.classList.add('result-field'); fL.value = ''; }
+    if (m === 'grad'){ fG.disabled = true; fG.classList.add('result-field'); fG.value = ''; }
+    if (m === 'h')   { fH.disabled = true; fH.classList.add('result-field'); fH.value = ''; }
+
+    // Hide result
+    document.getElementById('result-card').classList.add('hidden');
+    document.getElementById('products-card').classList.add('hidden');
+}
+
+/* ── CALCULATE ────────────────────────────────────────────── */
+function calculate() {
+    const hv = parseFloat(document.getElementById('in-h').value);
+    const lv = parseFloat(document.getElementById('in-l').value);
+    const gv = parseFloat(document.getElementById('in-g').value);
+
+    let H, L, G; // height (cm), length (m), gradient (%)
+
+    if (mode === 'len') {
+        if (!valid(hv, 'Höhe') || !valid(gv, 'Steigung')) return;
+        H = hv; G = gv;
+        L = H / G; // Länge(m) = Höhe(cm) / Steigung(%)
+    } else if (mode === 'grad') {
+        if (!valid(hv, 'Höhe') || !valid(lv, 'Rampenlänge')) return;
+        H = hv; L = lv;
+        G = H / L; // Steigung(%) = Höhe(cm) / Länge(m)
+    } else {
+        if (!valid(lv, 'Rampenlänge') || !valid(gv, 'Steigung')) return;
+        L = lv; G = gv;
+        H = G * L; // Höhe(cm) = Steigung(%) × Länge(m)
+    }
+
+    // Fill output field
+    const outField = mode === 'len' ? document.getElementById('in-l')
+                   : mode === 'grad' ? document.getElementById('in-g')
+                   : document.getElementById('in-h');
+    if (mode === 'len')  outField.value = round(L, 2);
+    if (mode === 'grad') outField.value = round(G, 1);
+    if (mode === 'h')    outField.value = round(H, 1);
+
+    renderResult(H, L, G);
+}
+
+function valid(val, name) {
+    if (isNaN(val) || val <= 0) { alert(`Bitte einen gültigen Wert für "${name}" eingeben.`); return false; }
+    return true;
+}
+
+/* ── RENDER RESULT ────────────────────────────────────────── */
+function renderResult(H, L, G) {
+    const u = users[user];
+
+    // Status
+    const badge  = document.getElementById('status-badge');
+    const stText = document.getElementById('status-text');
+    badge.className = 'status-badge';
+    if (G <= u.max) {
+        badge.classList.add('s-ok');
+        stText.textContent = `Steigung ${round(G,1)} % liegt im empfohlenen Bereich für: ${u.label}`;
+    } else if (G <= u.max * 1.5) {
+        badge.classList.add('s-warn');
+        stText.textContent = `Steigung ${round(G,1)} % überschreitet die Empfehlung für ${u.label} (max. ${u.max} %). Bitte prüfen.`;
+    } else {
+        badge.classList.add('s-bad');
+        stText.textContent = `Steigung ${round(G,1)} % ist zu hoch für ${u.label} (max. ${u.max} %). Rampenlänge vergrößern!`;
+    }
+
+    // Main result
+    const labels = { len: ['Benötigte Rampenlänge', round(L,2), 'm'],
+                     grad:['Berechnete Steigung',    round(G,1), '%'],
+                     h:   ['Überwindbare Höhe',      round(H,1), 'cm'] };
+    const [lbl, val, unt] = labels[mode];
+    document.getElementById('res-label').textContent   = lbl;
+    document.getElementById('res-number').innerHTML    = `${val} <span>${unt}</span>`;
+    document.getElementById('res-sub').textContent     =
+        `Höhe: ${round(H,1)} cm · Länge: ${round(L,2)} m · Steigung: ${round(G,1)} %`;
+    document.getElementById('res-ratio').textContent   = `1 : ${round(100/G,1)}`;
+    document.getElementById('res-subtitle').textContent=
+        `Berechnet für: ${u.label}`;
+
+    // Detail tiles
+    document.getElementById('d-h').textContent = round(H,1) + ' cm';
+    document.getElementById('d-l').textContent = round(L,2) + ' m';
+    document.getElementById('d-g').textContent = round(G,1) + ' %';
+
+    // SVG
+    drawRamp(H, L, G);
+
+    // Products
+    renderProducts(H, L, G);
+
+    // Show
+    document.getElementById('result-card').classList.remove('hidden');
+    document.getElementById('result-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+/* ── SVG RAMP ─────────────────────────────────────────────── */
+function drawRamp(H_cm, L_m, G_pct) {
+    const svg = document.getElementById('ramp-svg');
+
+    // Visual: cap angle so it's visible but not absurd
+    const clampedG = Math.max(1, Math.min(G_pct, 35));
+    const angleRad = Math.atan(clampedG / 100);
+
+    const baseW  = 300;
+    const rampH  = baseW * Math.tan(angleRad);
+    const capH   = Math.min(rampH, 110);
+
+    const ox = 60,  oy = 140; // origin (bottom-left of ramp)
+    const ex = ox + baseW;    // end x
+    const ey = oy - capH;     // end y (top-right)
+
+    // Colors
+    const blue1 = '#1B3570';
+    const blue2 = '#5BB4D8';
+    const red   = '#C0392B';
+    const green = '#1D8348';
+    const light = '#D6EAF8';
+
+    svg.innerHTML = `
+        <!-- Ground shadow -->
+        <line x1="30" y1="${oy}" x2="450" y2="${oy}" stroke="#C8D4E0" stroke-width="2"/>
+
+        <!-- Ramp fill -->
+        <polygon points="${ox},${oy} ${ex},${ey} ${ex},${oy}"
+            fill="${light}" stroke="${blue2}" stroke-width="1.5"/>
+
+        <!-- Ramp slope -->
+        <line x1="${ox}" y1="${oy}" x2="${ex}" y2="${ey}"
+            stroke="${blue1}" stroke-width="3" stroke-linecap="round"/>
+
+        <!-- Height bracket -->
+        <line x1="${ex + 18}" y1="${oy}" x2="${ex + 18}" y2="${ey}"
+            stroke="${red}" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="${ex + 13}" y1="${oy}" x2="${ex + 23}" y2="${oy}" stroke="${red}" stroke-width="1.5"/>
+        <line x1="${ex + 13}" y1="${ey}" x2="${ex + 23}" y2="${ey}" stroke="${red}" stroke-width="1.5"/>
+        <text x="${ex + 26}" y="${(oy + ey) / 2 + 4}" fill="${red}"
+            font-size="12" font-family="Montserrat,sans-serif" font-weight="700">
+            ${round(H_cm,1)} cm
+        </text>
+
+        <!-- Length bracket -->
+        <line x1="${ox}" y1="${oy + 22}" x2="${ex}" y2="${oy + 22}"
+            stroke="${green}" stroke-width="1.5" stroke-dasharray="4,3"/>
+        <line x1="${ox}" y1="${oy + 17}" x2="${ox}" y2="${oy + 27}" stroke="${green}" stroke-width="1.5"/>
+        <line x1="${ex}" y1="${oy + 17}" x2="${ex}" y2="${oy + 27}" stroke="${green}" stroke-width="1.5"/>
+        <text x="${(ox + ex) / 2 - 24}" y="${oy + 40}" fill="${green}"
+            font-size="12" font-family="Montserrat,sans-serif" font-weight="700">
+            ${round(L_m,2)} m
+        </text>
+
+        <!-- Gradient label on slope -->
+        <text x="${ox + baseW * .35}" y="${oy - capH * .45}" fill="${blue1}"
+            font-size="14" font-family="Montserrat,sans-serif" font-weight="800"
+            transform="rotate(${-Math.atan(capH/baseW) * 180/Math.PI},${ox + baseW*.35},${oy - capH*.45})">
+            ${round(G_pct,1)} %
+        </text>
+    `;
+}
+
+/* ── PRODUCT DATA ─────────────────────────────────────────── */
+// length & maxHeight in cm, price in EUR
+const catalog = [
+  {
+    series: 'PONDUS', type: 'Anpassbares Rampensystem · 2 Schienen-Set',
+    variants: [
+      {
+        name: 'PONDUS S', desc: '1-teilig', hmv: '',
+        items: [
+          { length: 55,  maxHeight: 11, load: 400, width: 21,   weight: '2,9 kg', folded: null, artNr: 'PS000550', price: 228  },
+          { length: 120, maxHeight: 23, load: 400, width: 21,   weight: '5,9 kg', folded: null, artNr: 'PS001170', price: 257  },
+        ]
+      },
+      {
+        name: 'PONDUS F2', desc: '2-teilig faltbar', hmv: '22.50.01.0063',
+        items: [
+          { length: 110, maxHeight: 22, load: 400, width: 21,   weight: '7,1 kg', folded: 57,  artNr: 'PF201100', price: 655  },
+          { length: 150, maxHeight: 30, load: 400, width: 21,   weight: '9,2 kg', folded: 77,  artNr: 'PF201500', price: 689  },
+          { length: 200, maxHeight: 40, load: 300, width: 21,   weight: '11,9 kg',folded: 101, artNr: 'PF202000', price: 795  },
+        ]
+      },
+      {
+        name: 'PONDUS T2', desc: '2-teilig teleskopierbar', hmv: '22.50.01.0062',
+        items: [
+          { length: 120, maxHeight: 24, load: 350, width: 19.5, weight: '7,4 kg', folded: 76,  artNr: 'PT201190', price: 565  },
+          { length: 200, maxHeight: 40, load: 300, width: 19.5, weight: '11,4 kg',folded: 117, artNr: 'PT202030', price: 665  },
+        ]
+      },
+      {
+        name: 'PONDUS T3', desc: '3-teilig teleskopierbar', hmv: '22.50.01.0062',
+        items: [
+          { length: 200, maxHeight: 40, load: 300, width: 18,   weight: '12,2 kg',folded: 87,  artNr: 'PT301990', price: 799  },
+          { length: 290, maxHeight: 58, load: 250, width: 18,   weight: '16,5 kg',folded: 117, artNr: 'PT302890', price: 889  },
+        ]
+      },
+      {
+        name: 'PONDUS FT3', desc: '3-teilig falt- und teleskopierbar', hmv: '',
+        items: [
+          { length: 280, maxHeight: 60, load: 250, width: 19.5, weight: '16,6 kg',folded: 102, artNr: 'PFT32770', price: 999  },
+        ]
+      },
+    ]
+  },
+  {
+    series: 'BROADBAND', type: 'Robuste Leichtbaurampe',
+    variants: [
+      {
+        name: 'SPECTRUM', desc: '1 Stk. faltbar in der Länge', hmv: '22.50.01.0097',
+        items: [
+          { length: 70,  maxHeight: 16, load: 300, width: 71, weight: '5,9 kg', folded: null, artNr: 'BS1P700',  price: 625  },
+          { length: 90,  maxHeight: 19, load: 300, width: 71, weight: '7,0 kg', folded: null, artNr: 'BS1P900',  price: 565  },
+          { length: 120, maxHeight: 25, load: 300, width: 71, weight: '9,0 kg', folded: null, artNr: 'BS1P1200', price: 745  },
+          { length: 150, maxHeight: 31, load: 300, width: 71, weight: '11,0 kg',folded: null, artNr: 'BS1P1500', price: 819  },
+        ]
+      },
+      {
+        name: 'DEFRAG', desc: 'Set (2 Stk.) faltbar in Länge und Breite', hmv: '22.50.01.0096',
+        items: [
+          { length: 180, maxHeight: 37, load: 300, width: 73, weight: '14,2 kg',folded: 94,  artNr: 'BD2P1800', price: 1299 },
+          { length: 240, maxHeight: 50, load: 300, width: 73, weight: '21,2 kg',folded: 125, artNr: 'BD2P2400', price: 1799 },
+          { length: 300, maxHeight: 60, load: 300, width: 73, weight: '24,8 kg',folded: 155, artNr: 'BD2P3000', price: 1999 },
+        ]
+      },
+    ]
+  },
+  {
+    series: 'DOORSTEP', type: 'Rampen aus hochfestem Aluminium · für kleine Stufen (3–7 cm)',
+    variants: [
+      {
+        name: 'MICRO', desc: 'Set (2 Stk.)', hmv: '',
+        items: [
+          { length: 76, maxHeight: 7, load: 350, width: null, weight: '2×1,1 kg', folded: null, artNr: 'PFD04225A', price: 179 },
+        ]
+      },
+      {
+        name: 'MINI', desc: '', hmv: '',
+        items: [
+          { length: 50, maxHeight: 7, load: 350, width: null, weight: '3,3 kg', folded: null, artNr: 'PFD04076A', price: 179 },
+        ]
+      },
+      {
+        name: 'VERSTELLBAR', desc: '', hmv: '',
+        items: [
+          { length: 76, maxHeight: 7, load: 350, width: null, weight: '1,6 kg', folded: null, artNr: 'PAW04Z76', price: 159 },
+        ]
+      },
+    ]
+  },
+];
+
+/* ── RENDER PRODUCTS ──────────────────────────────────────── */
+function renderProducts(H, L, G) {
+    const neededLenCm = L * 100; // convert m → cm
+
+    document.getElementById('prod-req').innerHTML =
+        `Ihre Anforderung: <strong>Höhe ${round(H,1)} cm</strong> · <strong>Mindestlänge ${round(L,2)} m (${round(neededLenCm,0)} cm)</strong> · Steigung ${round(G,1)} %`;
+
+    const container = document.getElementById('products-content');
+    container.innerHTML = '';
+
+    let totalMatches = 0;
+
+    catalog.forEach(cat => {
+        const seriesEl = document.createElement('div');
+        seriesEl.className = 'series-block';
+
+        let seriesHasMatch = false;
+        let variantsHTML = '';
+
+        cat.variants.forEach(variant => {
+            let rowsHTML = '';
+            let variantHasMatch = false;
+
+            variant.items.forEach(item => {
+                const matches = item.length >= neededLenCm && item.maxHeight >= H;
+                if (matches) { variantHasMatch = true; seriesHasMatch = true; totalMatches++; }
+
+                const foldedStr = item.folded ? `<br><span style="font-size:.7rem;color:var(--muted)">gefaltet: ${item.folded} cm</span>` : '';
+                const widthStr  = item.width  ? `${item.width} cm` : '—';
+                const matchTag  = matches ? '<span class="match-tag">✓ geeignet</span>' : '';
+
+                rowsHTML += `
+                <tr class="${matches ? 'match' : ''}">
+                    <td><strong>${item.length} cm</strong>${foldedStr}</td>
+                    <td>${item.maxHeight} cm</td>
+                    <td>${item.load} kg</td>
+                    <td>${widthStr}</td>
+                    <td>${item.weight}</td>
+                    <td class="prod-artnr">${item.artNr}</td>
+                    <td class="prod-price">€ ${item.price.toLocaleString('de-DE')}</td>
+                    <td>${matchTag}</td>
+                </tr>`;
+            });
+
+            const hmvTag  = variant.hmv  ? `<span class="hmv-tag">HMV ${variant.hmv}</span>` : '';
+            const descTag = variant.desc ? `<span class="qty-tag">${variant.desc}</span>` : '';
+
+            variantsHTML += `
+            <div class="variant-block">
+                <div class="variant-title">
+                    <strong>${variant.name}</strong>
+                    ${descTag}
+                    ${hmvTag}
+                </div>
+                <div style="overflow-x:auto">
+                <table class="prod-table">
+                    <thead><tr>
+                        <th>Länge</th>
+                        <th>Max. Stufe</th>
+                        <th>Belastbar</th>
+                        <th>Spurbreite</th>
+                        <th>Gewicht</th>
+                        <th>Art.-Nr.</th>
+                        <th>UVP inkl. MwSt.</th>
+                        <th></th>
+                    </tr></thead>
+                    <tbody>${rowsHTML}</tbody>
+                </table>
+                </div>
+            </div>`;
+        });
+
+        seriesEl.innerHTML = `
+            <div class="series-heading">
+                <span class="series-name">${cat.series}</span>
+                <span class="series-type">${cat.type}</span>
+            </div>
+            ${variantsHTML}`;
+
+        container.appendChild(seriesEl);
+    });
+
+    if (totalMatches === 0) {
+        container.innerHTML = `<div class="no-match-note">
+            Für die berechneten Anforderungen (Höhe ${round(H,1)} cm, Länge ${round(L,2)} m) wurde kein passendes
+            Produkt gefunden. Bitte wenden Sie sich an unseren Kundenservice.
+        </div>`;
+    }
+
+    document.getElementById('products-card').classList.remove('hidden');
+}
+
+/* ── UTILS ────────────────────────────────────────────────── */
+function round(v, d) { return Math.round(v * Math.pow(10,d)) / Math.pow(10,d); }
+
+/* ── INIT ─────────────────────────────────────────────────── */
+setMode('len');
+setUser('public');
+</script>
+</body>
+</html>
