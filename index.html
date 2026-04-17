@@ -471,43 +471,49 @@
             display: flex;
             justify-content: space-between;
             align-items: baseline;
-            margin-bottom: 6px;
+            margin-bottom: 8px;
         }
         .slider-lbl {
-            font-size: .78rem;
+            font-size: .95rem;
             font-weight: 700;
             color: var(--primary);
         }
         .slider-val {
-            font-size: .82rem;
-            font-weight: 700;
+            font-size: 1rem;
+            font-weight: 800;
             color: var(--secondary);
         }
+        .slider-controls {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
         .slider-range {
-            width: 100%;
+            flex: 1;
             accent-color: var(--secondary);
             cursor: pointer;
         }
-        .slider-derived {
-            grid-column: 1 / -1;
+        .slider-pm {
+            width: 34px;
+            height: 34px;
+            border-radius: 50%;
+            border: 2px solid var(--border);
+            background: #fff;
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: var(--primary);
+            cursor: pointer;
             display: flex;
             align-items: center;
-            gap: 10px;
-            padding: 10px 14px;
-            background: #fff;
-            border-radius: 8px;
-            border: 1.5px solid var(--border);
+            justify-content: center;
+            flex-shrink: 0;
+            transition: border-color .15s, background .15s, color .15s;
+            line-height: 1;
+            padding: 0;
+            font-family: 'Montserrat', sans-serif;
         }
-        .sd-label {
-            font-size: .78rem;
-            color: var(--muted);
-            font-weight: 600;
-        }
-        .sd-value {
-            font-size: .92rem;
-            font-weight: 800;
-            color: var(--primary);
-        }
+        .slider-pm:hover { border-color: var(--secondary); background: var(--secondary-light); }
+        .slider-pm:active { background: var(--secondary); color: #fff; border-color: var(--secondary); }
 
         /* ── DETAILS GRID ─────────────────────────── */
         .details-grid {
@@ -868,29 +874,13 @@
 
         <!-- SVG Ramp -->
         <div class="ramp-box">
-            <svg id="ramp-svg" viewBox="0 0 480 170" xmlns="http://www.w3.org/2000/svg"></svg>
+            <svg id="ramp-svg" viewBox="0 0 480 192" xmlns="http://www.w3.org/2000/svg"></svg>
         </div>
 
         <!-- Schieberegler -->
         <div class="slider-section">
             <span class="slider-section-title">Werte anpassen</span>
             <div class="sliders-grid" id="sliders-grid"></div>
-        </div>
-
-        <!-- Detail tiles -->
-        <div class="details-grid">
-            <div class="detail-tile">
-                <div class="detail-tile-label">Höhe</div>
-                <div class="detail-tile-value" id="d-h">—</div>
-            </div>
-            <div class="detail-tile">
-                <div class="detail-tile-label">Rampenlänge</div>
-                <div class="detail-tile-value" id="d-l">—</div>
-            </div>
-            <div class="detail-tile">
-                <div class="detail-tile-label">Steigung</div>
-                <div class="detail-tile-value" id="d-g">—</div>
-            </div>
         </div>
 
         <!-- Sicherheitshinweis -->
@@ -1082,11 +1072,6 @@ function updateDisplay(H, L, G) {
     document.getElementById('res-ratio').textContent  = `1 : ${round(100/G,1)}`;
     document.getElementById('res-subtitle').textContent = `Berechnet für: ${u.label}`;
 
-    // Detail tiles
-    document.getElementById('d-h').textContent = round(H,1) + ' cm';
-    document.getElementById('d-l').textContent = round(L,2) + ' m';
-    document.getElementById('d-g').textContent = round(G,1) + ' %';
-
     // SVG
     drawRamp(H, L, G);
 
@@ -1107,28 +1092,16 @@ function setupSliders(H, L, G) {
 
     if (mode === 'len') {
         grid.innerHTML =
-            sliderHTML('h', 'Höhe',     round(H,1), 'cm', 2,   80, 0.5) +
-            sliderHTML('g', 'Steigung', round(G,1), '%',  1,   30, 0.5) +
-            `<div class="slider-derived">
-                <span class="sd-label">Rampenlänge (berechnet):</span>
-                <span class="sd-value" id="sd-val">${round(L,2)} m</span>
-            </div>`;
+            sliderHTML('h', 'Höhe',     round(H,1), 'cm', 2,  80, 0.5) +
+            sliderHTML('g', 'Steigung', round(G,1), '%',  1,  30, 0.5);
     } else if (mode === 'grad') {
         grid.innerHTML =
             sliderHTML('h', 'Höhe',        round(H,1), 'cm', 2,   80, 0.5) +
-            sliderHTML('l', 'Rampenlänge', round(L,2), 'm',  0.3,  8, 0.1) +
-            `<div class="slider-derived">
-                <span class="sd-label">Steigung (berechnet):</span>
-                <span class="sd-value" id="sd-val">${round(G,1)} %</span>
-            </div>`;
+            sliderHTML('l', 'Rampenlänge', round(L,2), 'm',  0.3,  8, 0.1);
     } else {
         grid.innerHTML =
             sliderHTML('l', 'Rampenlänge', round(L,2), 'm',  0.3,  8, 0.1) +
-            sliderHTML('g', 'Steigung',    round(G,1), '%',  1,   30, 0.5) +
-            `<div class="slider-derived">
-                <span class="sd-label">Höhe (berechnet):</span>
-                <span class="sd-value" id="sd-val">${round(H,1)} cm</span>
-            </div>`;
+            sliderHTML('g', 'Steigung',    round(G,1), '%',  1,   30, 0.5);
     }
 
     ['sl-h', 'sl-l', 'sl-g'].forEach(id => {
@@ -1143,9 +1116,21 @@ function sliderHTML(key, label, value, unit, min, max, step) {
             <span class="slider-lbl">${label}</span>
             <span class="slider-val" id="sv-${key}">${value} ${unit}</span>
         </div>
-        <input type="range" class="slider-range" id="sl-${key}"
-               min="${min}" max="${max}" step="${step}" value="${value}">
+        <div class="slider-controls">
+            <button class="slider-pm" onclick="stepSlider('sl-${key}', -${step}, '${unit}')">−</button>
+            <input type="range" class="slider-range" id="sl-${key}"
+                   min="${min}" max="${max}" step="${step}" value="${value}">
+            <button class="slider-pm" onclick="stepSlider('sl-${key}', ${step}, '${unit}')">+</button>
+        </div>
     </div>`;
+}
+
+function stepSlider(id, delta) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    const newVal = Math.min(parseFloat(el.max), Math.max(parseFloat(el.min), parseFloat(el.value) + delta));
+    el.value = newVal;
+    onSlide();
 }
 
 function onSlide() {
@@ -1169,15 +1154,6 @@ function onSlide() {
     if (!isFinite(H) || !isFinite(L) || !isFinite(G) || H <= 0 || L <= 0 || G <= 0) return;
 
     currentH = H; currentL = L; currentG = G;
-
-    // Update derived display
-    const sdVal = document.getElementById('sd-val');
-    if (sdVal) {
-        if (mode === 'len')  sdVal.textContent = round(L,2) + ' m';
-        if (mode === 'grad') sdVal.textContent = round(G,1) + ' %';
-        if (mode === 'h')    sdVal.textContent = round(H,1) + ' cm';
-    }
-
     updateDisplay(H, L, G);
 }
 
