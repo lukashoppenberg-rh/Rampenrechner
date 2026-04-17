@@ -406,6 +406,15 @@
             opacity: .75;
             margin-bottom: 6px;
         }
+        .result-prefix {
+            font-size: .72rem;
+            font-weight: 500;
+            opacity: .6;
+            margin-bottom: 2px;
+            min-height: 1em;
+            text-transform: uppercase;
+            letter-spacing: .4px;
+        }
         .result-number {
             font-size: 3.2rem;
             font-weight: 800;
@@ -759,7 +768,7 @@
                 <span class="rt-brand">DOORSTEP-Serie</span>
             </button>
             <button class="rt-btn" id="rt-leichtbau" onclick="setRampType('leichtbau')">
-                <span class="rt-name">Leichtbaurampe</span>
+                <span class="rt-name">Flächenrampe</span>
                 <span class="rt-brand">BROADBAND-Serie</span>
             </button>
         </div>
@@ -767,7 +776,9 @@
         <!-- Nutzergruppe -->
         <p class="group-label">Nutzergruppe</p>
         <div class="user-types">
-            <button class="ut-btn active" id="ut-public" onclick="setUser('public')">Öff. Bereich · max. 6% Steigung</button>
+            <button class="ut-btn" id="ut-tetra" onclick="setUser('tetra')">Tetraplegiker · max. 3% Steigung</button>
+            <button class="ut-btn active" id="ut-public" onclick="setUser('public')">Öff. Bereich (DIN) · max. 6% Steigung</button>
+            <button class="ut-btn" id="ut-self" onclick="setUser('self')">Selbstfahrer · max. 6% Steigung</button>
             <button class="ut-btn" id="ut-strong" onclick="setUser('strong')">Kräft. Selbstfahrer · max. 10% Steigung</button>
             <button class="ut-btn" id="ut-helper" onclick="setUser('helper')">Mit Helfer · max. 12% Steigung</button>
             <button class="ut-btn" id="ut-elec" onclick="setUser('elec')">Elektroantrieb · bis 20% Steigung</button>
@@ -775,6 +786,14 @@
 
         <!-- Modus -->
         <div class="mode-tabs">
+            <button class="mode-tab" id="tab-h" onclick="setMode('h')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                    <line x1="12" y1="3" x2="12" y2="21"/>
+                    <polyline points="8,7 12,3 16,7"/><polyline points="8,17 12,21 16,17"/>
+                </svg>
+                Höhe berechnen
+                <span class="tab-computes">→ Höhe</span>
+            </button>
             <button class="mode-tab active" id="tab-len" onclick="setMode('len')">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
                     <path d="M3 17L21 7"/><line x1="3" y1="17" x2="21" y2="17"/>
@@ -790,14 +809,6 @@
                 </svg>
                 Steigung berechnen
                 <span class="tab-computes">→ Steigung</span>
-            </button>
-            <button class="mode-tab" id="tab-h" onclick="setMode('h')">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
-                    <line x1="12" y1="3" x2="12" y2="21"/>
-                    <polyline points="8,7 12,3 16,7"/><polyline points="8,17 12,21 16,17"/>
-                </svg>
-                Höhe berechnen
-                <span class="tab-computes">→ Höhe</span>
             </button>
         </div>
 
@@ -864,6 +875,7 @@
         <div class="result-display">
             <div>
                 <div class="result-label" id="res-label">Benötigte Rampenlänge</div>
+                <div class="result-prefix" id="res-prefix"></div>
                 <div class="result-number" id="res-number">— <span>m</span></div>
                 <div class="result-sub" id="res-sub"></div>
             </div>
@@ -918,8 +930,10 @@
 <script>
 /* ── DATA ─────────────────────────────────────────── */
 const users = {
-    public: { max: 6,  label: 'Öff. Bereich (DIN 18040)', pctLabel: 'max. 6%' },
-    strong: { max: 10, label: 'Kräftige Selbstfahrer',    pctLabel: '6–10%'   },
+    tetra:  { max: 3,  label: 'Tetraplegiker',            pctLabel: 'max. 3%'  },
+    public: { max: 6,  label: 'Öff. Bereich (DIN 18040)', pctLabel: 'max. 6%'  },
+    self:   { max: 6,  label: 'Selbstfahrer',             pctLabel: 'max. 6%'  },
+    strong: { max: 10, label: 'Kräftige Selbstfahrer',    pctLabel: '6–10%'    },
     helper: { max: 12, label: 'Mit Helfer',               pctLabel: 'max. 12%' },
     elec:   { max: 20, label: 'Elektroantrieb',           pctLabel: 'bis 20%'  },
 };
@@ -1060,12 +1074,13 @@ function updateDisplay(H, L, G) {
 
     // Main result value
     const labels = {
-        len:  ['Benötigte Rampenlänge', round(L,2), 'm'],
-        grad: ['Berechnete Steigung',   round(G,1), '%'],
-        h:    ['Überwindbare Höhe',     round(H,1), 'cm'],
+        len:  { lbl: 'Benötigte Rampenlänge', prefix: 'mindestens', val: round(L,2), unt: 'm'  },
+        grad: { lbl: 'Berechnete Steigung',   prefix: '',           val: round(G,1), unt: '%'  },
+        h:    { lbl: 'Überwindbare Höhe',     prefix: '',           val: round(H,1), unt: 'cm' },
     };
-    const [lbl, val, unt] = labels[mode];
+    const { lbl, prefix, val, unt } = labels[mode];
     document.getElementById('res-label').textContent  = lbl;
+    document.getElementById('res-prefix').textContent = prefix;
     document.getElementById('res-number').innerHTML   = `${val} <span>${unt}</span>`;
     document.getElementById('res-sub').textContent    =
         `Höhe: ${round(H,1)} cm · Länge: ${round(L,2)} m · Steigung: ${round(G,1)} %`;
