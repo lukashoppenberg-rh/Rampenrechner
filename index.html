@@ -133,33 +133,6 @@
             background: #EBF8FF;
         }
 
-        /* ── NUTZERGRUPPE ─────────────────────────── */
-        .user-types {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-bottom: 28px;
-        }
-        .ut-btn {
-            padding: 8px 14px;
-            border: 2px solid var(--border);
-            background: transparent;
-            border-radius: 100px;
-            font-family: 'Montserrat', sans-serif;
-            font-size: .8rem;
-            font-weight: 600;
-            color: var(--muted);
-            cursor: pointer;
-            transition: all .18s;
-            white-space: nowrap;
-        }
-        .ut-btn:hover { border-color: var(--secondary); color: var(--primary); }
-        .ut-btn.active {
-            background: var(--secondary);
-            border-color: var(--secondary);
-            color: #fff;
-        }
-
         /* ── MODE TABS ────────────────────────────── */
         .mode-tabs {
             display: grid;
@@ -287,12 +260,16 @@
             display: flex;
             flex-direction: column;
             gap: 2px;
-            padding: 7px 12px;
+            padding: 9px 14px;
             border-radius: 7px;
             background: #fff;
             border: 1.5px solid var(--border);
+            cursor: pointer;
+            text-align: left;
+            font-family: 'Montserrat', sans-serif;
             transition: border-color .18s, background .18s;
         }
+        .grad-info-item:hover { border-color: var(--secondary); }
         .gi-name {
             font-size: .74rem;
             font-weight: 600;
@@ -774,14 +751,9 @@
         </div>
 
         <!-- Nutzergruppe -->
-        <p class="group-label">Nutzergruppe</p>
-        <div class="user-types">
-            <button class="ut-btn" id="ut-tetra" onclick="setUser('tetra')">Tetraplegiker · max. 3% Steigung</button>
-            <button class="ut-btn active" id="ut-public" onclick="setUser('public')">Öff. Bereich (DIN) · max. 6% Steigung</button>
-            <button class="ut-btn" id="ut-self" onclick="setUser('self')">Selbstfahrer · max. 6% Steigung</button>
-            <button class="ut-btn" id="ut-strong" onclick="setUser('strong')">Kräft. Selbstfahrer · max. 10% Steigung</button>
-            <button class="ut-btn" id="ut-helper" onclick="setUser('helper')">Mit Helfer · max. 12% Steigung</button>
-            <button class="ut-btn" id="ut-elec" onclick="setUser('elec')">Elektroantrieb · bis 20% Steigung</button>
+        <div class="grad-info-box">
+            <div class="grad-info-label">Nutzergruppe nach DIN 18040</div>
+            <div class="grad-info-items" id="grad-info-items"></div>
         </div>
 
         <!-- Modus -->
@@ -841,12 +813,6 @@
                     <span class="unit">%</span>
                 </div>
             </div>
-        </div>
-
-        <!-- Maximale Steigungen Info -->
-        <div class="grad-info-box">
-            <div class="grad-info-label">Maximale Steigungen nach DIN 18040</div>
-            <div class="grad-info-items" id="grad-info-items"></div>
         </div>
 
         <button class="calc-btn" onclick="calculate()">Berechnen</button>
@@ -958,9 +924,6 @@ function setRampType(rt) {
 /* ── USER ─────────────────────────────────────────── */
 function setUser(u) {
     user = u;
-    Object.keys(users).forEach(k => {
-        document.getElementById('ut-' + k).classList.toggle('active', k === u);
-    });
     updateGradInfoItems();
     if (mode !== 'grad') {
         const gField = document.getElementById('in-g');
@@ -1177,10 +1140,17 @@ function drawRamp(H_cm, L_m, G_pct) {
     const svg = document.getElementById('ramp-svg');
     const clampedG = Math.max(1, Math.min(G_pct, 35));
     const angleRad = Math.atan(clampedG / 100);
-    const baseW = 300;
+
+    // Grundbreite skaliert mit der tatsächlichen Länge, damit sich die Grafik
+    // bei jeder Wertänderung sichtbar verändert (nicht nur bei der Steigung).
+    const minBaseW = 80, maxBaseW = 380;
+    const pxPerMeter = 120;
+    const baseW = Math.max(minBaseW, Math.min(maxBaseW, L_m * pxPerMeter));
+
     const rampH = baseW * Math.tan(angleRad);
     const capH  = Math.min(rampH, 110);
-    const ox = 60, oy = 140;
+    const oy = 140;
+    const ox = Math.round(Math.max(30, (480 - baseW - 45) / 2));
     const ex = ox + baseW, ey = oy - capH;
     const b1 = '#1B3570', b2 = '#5BB4D8', red = '#C0392B', grn = '#1D8348', lt = '#D6EAF8';
 
@@ -1395,10 +1365,10 @@ function renderProducts(H, L, G) {
 function updateGradInfoItems() {
     document.getElementById('grad-info-items').innerHTML =
         Object.entries(users).map(([k, u]) => `
-            <div class="grad-info-item${k === user ? ' active' : ''}">
+            <button type="button" class="grad-info-item${k === user ? ' active' : ''}" onclick="setUser('${k}')">
                 <span class="gi-name">${u.label}</span>
                 <span class="gi-pct">${u.pctLabel} Steigung</span>
-            </div>
+            </button>
         `).join('');
 }
 
