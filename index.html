@@ -1138,20 +1138,23 @@ function onSlide() {
 /* ── SVG RAMP ─────────────────────────────────────── */
 function drawRamp(H_cm, L_m, G_pct) {
     const svg = document.getElementById('ramp-svg');
-    const clampedG = Math.max(1, Math.min(G_pct, 35));
-    const angleRad = Math.atan(clampedG / 100);
 
-    // Grundbreite skaliert mit der tatsächlichen Länge, damit sich die Grafik
-    // bei jeder Wertänderung sichtbar verändert (nicht nur bei der Steigung).
+    // Höhe und Länge unabhängig skalieren, damit das Dreieck visuell zur
+    // angezeigten cm-Zahl passt: bleibt H konstant, bleibt die Dreiecks-
+    // höhe konstant; ändert sich H, ändert sich auch die Höhe sichtbar.
+    // Der visuelle Steigungswinkel kann dadurch leicht vom tatsächlichen
+    // abweichen — der exakte Wert wird ohnehin als Text ausgegeben.
+    const minRampH = 12, maxRampH = 100;
+    const pxPerCm = 1.5;
+    const rampH = Math.max(minRampH, Math.min(maxRampH, H_cm * pxPerCm));
+
     const minBaseW = 80, maxBaseW = 380;
     const pxPerMeter = 120;
     const baseW = Math.max(minBaseW, Math.min(maxBaseW, L_m * pxPerMeter));
 
-    const rampH = baseW * Math.tan(angleRad);
-    const capH  = Math.min(rampH, 110);
     const oy = 140;
     const ox = Math.round(Math.max(30, (480 - baseW - 45) / 2));
-    const ex = ox + baseW, ey = oy - capH;
+    const ex = ox + baseW, ey = oy - rampH;
     const b1 = '#1B3570', b2 = '#5BB4D8', red = '#C0392B', grn = '#1D8348', lt = '#D6EAF8';
 
     svg.innerHTML = `
@@ -1168,9 +1171,9 @@ function drawRamp(H_cm, L_m, G_pct) {
         <line x1="${ex}" y1="${oy+17}" x2="${ex}" y2="${oy+27}" stroke="${grn}" stroke-width="1.5"/>
         <text x="${(ox+ex)/2-24}" y="${oy+40}" fill="${grn}"
               font-size="12" font-family="Montserrat,sans-serif" font-weight="700">${round(L_m,2)} m</text>
-        <text x="${ox+baseW*.35}" y="${oy-capH*.45}" fill="${b1}"
+        <text x="${ox+baseW*.35}" y="${oy-rampH*.45}" fill="${b1}"
               font-size="14" font-family="Montserrat,sans-serif" font-weight="800"
-              transform="rotate(${-Math.atan(capH/baseW)*180/Math.PI},${ox+baseW*.35},${oy-capH*.45})"
+              transform="rotate(${-Math.atan(rampH/baseW)*180/Math.PI},${ox+baseW*.35},${oy-rampH*.45})"
               >${round(G_pct,1)} %</text>`;
 }
 
