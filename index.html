@@ -896,16 +896,16 @@
 <script>
 /* ── DATA ─────────────────────────────────────────── */
 const users = {
-    tetra:  { max: 3,  label: 'Tetraplegiker',            pctLabel: 'max. 3%'  },
-    public: { max: 6,  label: 'Öff. Bereich (DIN 18040)', pctLabel: 'max. 6%'  },
-    self:   { max: 6,  label: 'Selbstfahrer',             pctLabel: 'max. 6%'  },
-    strong: { max: 10, label: 'Kräftige Selbstfahrer',    pctLabel: '6–10%'    },
-    helper: { max: 12, label: 'Mit Helfer',               pctLabel: 'max. 12%' },
-    elec:   { max: 20, label: 'Elektroantrieb',           pctLabel: 'bis 20%'  },
+    self3:    { max: 3,  label: 'Selbstfahrer',                pctLabel: 'max. 3%'  },
+    self6:    { max: 6,  label: 'Selbstfahrer',                pctLabel: 'max. 6%'  },
+    helper:   { max: 9,  label: 'Selbstfahrer mit Helfer',     pctLabel: 'max. 9%'  },
+    eantrieb: { max: 12, label: 'Selbstfahrer mit E-Antrieb',  pctLabel: 'max. 12%' },
+    elec:     { max: 15, label: 'Elektrorollstuhl',            pctLabel: 'max. 15%' },
+    elecAo:   { max: 18, label: 'Elektro-Außenrollstuhl',      pctLabel: 'max. 18%' },
 };
 
 let mode     = 'len';
-let user     = 'public';
+let user     = 'self6';
 let rampType = 'teleskop';
 let currentH, currentL, currentG;
 
@@ -1026,7 +1026,7 @@ function updateDisplay(H, L, G) {
     badge.className = 'status-badge';
     if (G <= u.max) {
         badge.classList.add('s-ok');
-        stText.textContent = `Steigung ${round(G,1)} % liegt im empfohlenen Bereich für: ${u.label}`;
+        stText.textContent = `Steigung ${round(G,1)} % liegt im empfohlenen Bereich für: ${u.label} (${u.pctLabel})`;
     } else if (G <= u.max * 1.5) {
         badge.classList.add('s-warn');
         stText.textContent = `Steigung ${round(G,1)} % überschreitet die Empfehlung für ${u.label} (${u.pctLabel} Steigung). Bitte prüfen.`;
@@ -1259,7 +1259,7 @@ const catalog = [
             {
                 name: 'VERSTELLBAR', desc: '', hmv: '',
                 items: [
-                    { length: 76, maxHeight: 7, load: 350, width: null, weight: '1,6 kg', folded: null, artNr: 'PAW04Z76', price: 159 },
+                    { length: 76, maxHeight: 7, load: 350, width: null, weight: '1,6 kg', folded: null, artNr: 'PAW04276', price: 159 },
                 ]
             },
         ]
@@ -1377,7 +1377,7 @@ function round(v, d) { return Math.round(v * Math.pow(10, d)) / Math.pow(10, d);
 
 /* ── INIT ─────────────────────────────────────────── */
 setMode('len');
-setUser('public');
+setUser('self6');
 </script>
 </body>
 </html>

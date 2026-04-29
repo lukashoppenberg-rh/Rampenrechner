@@ -13,17 +13,19 @@ Webbasiertes Tool zur Berechnung der **passenden Rampe für Rollstuhlfahrer und 
 - **Steigung berechnen** — aus Höhe + vorhandener Rampenlänge
 - **Höhe berechnen** — aus Rampenlänge + Steigung
 
-### Nutzergruppen nach DIN 18040
-Sechs vordefinierte Personengruppen mit den jeweils empfohlenen Maximalsteigungen:
+### Nutzergruppen nach Rehasense-Infoblatt (DIN 18040)
+Sechs Personengruppen mit den jeweils empfohlenen Maximalsteigungen:
 
-| Nutzergruppe              | Max. Steigung |
-|---------------------------|---------------|
-| Tetraplegiker             | 3 %           |
-| Öffentlicher Bereich      | 6 %           |
-| Selbstfahrer              | 6 %           |
-| Kräftige Selbstfahrer     | 10 %          |
-| Mit Helfer                | 12 %          |
-| Elektroantrieb            | bis 20 %      |
+| Nutzergruppe                  | Max. Steigung |
+|-------------------------------|---------------|
+| Selbstfahrer                  | 3 %           |
+| Selbstfahrer (Standard)       | 6 %           |
+| Selbstfahrer mit Helfer       | 9 %           |
+| Selbstfahrer mit E-Antrieb    | 12 %          |
+| Elektrorollstuhl              | 15 %          |
+| Elektro-Außenrollstuhl        | 18 %          |
+
+Der öffentliche Bereich ist nach **DIN 18040-1** mit max. 6 % auszuführen — entspricht der Default-Auswahl „Selbstfahrer 6 %".
 
 ### Drei Rampentypen
 - **PONDUS-Serie** — Teleskoprampen (S, F2, T2, T3, FT3)
