@@ -1,0 +1,21 @@
+{
+  "name": "Rehasense Rampenrechner",
+  "short_name": "Rampenrechner",
+  "description": "Berechnung der passenden Rampe für Rollstuhlfahrer und Mobilitätshilfen nach DIN 18040",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#1B3570",
+  "background_color": "#EEF3F8",
+  "lang": "de",
+  "categories": ["health", "utilities", "productivity"],
+  "icons": [
+    {
+      "src": "icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}

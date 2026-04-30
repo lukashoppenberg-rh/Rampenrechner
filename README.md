@@ -44,9 +44,35 @@ Der öffentliche Bereich ist nach **DIN 18040-1** mit max. 6 % auszuführen — 
 
 - **Vanilla HTML / CSS / JavaScript** — keine Frameworks, kein Build-Step
 - **Schrift:** Montserrat (Google Fonts)
+- **PWA:** Service Worker + Manifest für Offline-Nutzung und Home-Screen-Installation
 - **Hosting:** GitHub Pages
 
-Alles ist in einer einzigen [`index.html`](./index.html) gebündelt — Styles, Logik und Produktkatalog inline. Damit lädt die Seite ohne zusätzliche Requests und ist trivial zu hosten.
+Die Anwendung ist als **Progressive Web App** ausgeliefert — siehe [Installation auf dem Gerät](#installation-auf-dem-gerät). Kerncode und Produktkatalog liegen inline in [`index.html`](./index.html).
+
+---
+
+## Installation auf dem Gerät
+
+Die Web-App lässt sich auf jedem Smartphone, Tablet oder Desktop wie eine native App installieren — mit eigenem Icon, Vollbild ohne Browserleiste und Offline-Nutzung.
+
+### iPhone / iPad (Safari)
+1. https://lukashoppenberg-rh.github.io/Rampenrechner/ in **Safari** öffnen
+2. **Teilen-Symbol** unten antippen (Quadrat mit Pfeil nach oben)
+3. **„Zum Home-Bildschirm"** wählen
+4. **„Hinzufügen"** tippen — Icon erscheint auf dem Home-Bildschirm
+
+### Android (Chrome)
+1. Seite in **Chrome** öffnen
+2. Banner **„App installieren"** bestätigen
+   *(falls keiner erscheint: Drei-Punkte-Menü oben rechts → **„App installieren"** oder **„Zum Startbildschirm hinzufügen"**)*
+3. Icon erscheint im App-Drawer wie eine native App
+
+### Desktop (Chrome / Edge)
+1. Seite öffnen
+2. **Install-Icon** rechts in der Adressleiste klicken (oder Drei-Punkte-Menü → **„Apps installieren"**)
+3. App öffnet in eigenem Fenster, Verknüpfung im Startmenü
+
+Nach der Installation funktioniert der Rampenrechner auch **offline** — beim ersten Öffnen wird alles lokal gecached.
 
 ---
 

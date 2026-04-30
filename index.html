@@ -2,8 +2,17 @@
 <html lang="de">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Rampenrechner | Rehasense</title>
+    <meta name="description" content="Berechnung der passenden Rampe für Rollstuhlfahrer und Mobilitätshilfen nach DIN 18040">
+    <link rel="manifest" href="manifest.json">
+    <meta name="theme-color" content="#1B3570">
+    <link rel="icon" type="image/svg+xml" href="icon.svg">
+    <link rel="apple-touch-icon" href="icon.svg">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <meta name="apple-mobile-web-app-title" content="Rampenrechner">
+    <meta name="mobile-web-app-capable" content="yes">
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
         :root {
@@ -1381,6 +1390,13 @@ function round(v, d) { return Math.round(v * Math.pow(10, d)) / Math.pow(10, d);
 /* ── INIT ─────────────────────────────────────────── */
 setMode('len');
 setUser('self6');
+
+/* ── PWA: SERVICE WORKER ──────────────────────────── */
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('sw.js').catch(() => {});
+    });
+}
 </script>
 </body>
 </html>
