@@ -1,5 +1,5 @@
-const CACHE = 'rampenrechner-v1';
-const PRECACHE = ['./', './index.html', './manifest.json', './icon.svg', './logo.png'];
+const CACHE = 'rampenrechner-v2';
+const PRECACHE = ['./', './index.html', './manifest.json', './icon.svg', './Logo.png'];
 
 self.addEventListener('install', (event) => {
     event.waitUntil(
